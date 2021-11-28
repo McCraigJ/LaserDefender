@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Health : MonoBehaviour
 {
@@ -8,12 +9,13 @@ public class Health : MonoBehaviour
     [SerializeField] int score = 50;
     [SerializeField] ParticleSystem hitEffect;
     [SerializeField] bool applyCameraShake = false;
-
+    [SerializeField] Slider healthSlider;
 
     CameraShake cameraShake;
     AudioPlayer audioPlayer;
     ScoreKeeper scoreKeeper;
     LevelManager levelManager;
+    int maxHealth;
 
     public int GetHealth() => health;
 
@@ -23,6 +25,9 @@ public class Health : MonoBehaviour
         cameraShake = Camera.main.GetComponent<CameraShake>();
         scoreKeeper = FindObjectOfType<ScoreKeeper>();
         levelManager = FindObjectOfType<LevelManager>();
+        maxHealth = health;
+        healthSlider.gameObject.SetActive(false);
+        healthSlider.value = 1;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -45,6 +50,11 @@ public class Health : MonoBehaviour
     void TakeDamage(int damage)
     {
         health -= damage;
+        if (healthSlider != null)
+        {
+            healthSlider.value = health / (float)maxHealth;
+            healthSlider.gameObject.SetActive(true);
+        }
 
         if (health > 0)
         {
